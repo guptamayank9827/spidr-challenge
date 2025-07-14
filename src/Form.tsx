@@ -9,24 +9,40 @@ interface FormInputProps {
 function Form({ theme }: FormInputProps) {
     // State Definitions
     const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
 
     const [firstNameError, setFirstNameError] = useState(false);
+    const [lastNameError, setLastNameError] = useState(false);
 
     const [firstNameErrorMessage, setFirstNameErrorMessage] = useState('');
+    const [lastNameErrorMessage, setLastNameErrorMessage] = useState('');
 
 
     // Handle Input Changes
     const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let firstNameValue = event.target.value;
+        let firstNameValue = event.target.value;
 
-    setFirstName(firstNameValue);
-    if (firstNameValue.length < 1) {
-        setFirstNameError(true);
-        setFirstNameErrorMessage('First Name is required.');
-    } else {
-        setFirstNameError(false);
-        setFirstNameErrorMessage('');
-    }
+        setFirstName(firstNameValue);
+        if (firstNameValue.length < 1) {
+            setFirstNameError(true);
+            setFirstNameErrorMessage('First Name is required.');
+        } else {
+            setFirstNameError(false);
+            setFirstNameErrorMessage('');
+        }
+    };
+
+    const handleLastNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let lastNameValue = event.target.value;
+
+        setLastName(lastNameValue);
+        if (lastNameValue.length < 1) {
+            setLastNameError(true);
+            setLastNameErrorMessage('Last Name is required.');
+        } else {
+            setLastNameError(false);
+            setLastNameErrorMessage('');
+        }
     };
 
     // Validation & Form Submission
@@ -95,11 +111,11 @@ function Form({ theme }: FormInputProps) {
                 component="form"
                 onSubmit={handleFormSubmit}
                 sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 3,
-                mt: 4,
-                backgroundColor: theme.palette.background.default,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 3,
+                    mt: 4,
+                    backgroundColor: theme.palette.background.default,
                 }}
             >
 
@@ -114,6 +130,19 @@ function Form({ theme }: FormInputProps) {
                     placeholder="John"
                     error={firstNameError}
                     helperText={firstNameErrorMessage}
+                />
+
+                <TextField
+                    label="Last Name"
+                    id="lastName"
+                    name="lastName"
+                    value={lastName}
+                    onChange={handleLastNameChange}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Doe"
+                    error={lastNameError}
+                    helperText={lastNameErrorMessage}
                 />
 
                 <Button
