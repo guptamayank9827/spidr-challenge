@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormLabel, InputAdornment, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 
 interface FormInputProps {
@@ -11,17 +11,17 @@ function Form({ theme }: FormInputProps) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-
+    const [amount, setAmount] = useState('');
 
     const [firstNameError, setFirstNameError] = useState(false);
     const [lastNameError, setLastNameError] = useState(false);
     const [emailError, setEmailError] = useState(false);
-
+    const [amountError, setAmountError] = useState(false);
 
     const [firstNameErrorMessage, setFirstNameErrorMessage] = useState('');
     const [lastNameErrorMessage, setLastNameErrorMessage] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
-
+    const [amountErrorMessage, setAmountErrorMessage] = useState('');
 
 
     // Handle Input Changes
@@ -65,6 +65,19 @@ function Form({ theme }: FormInputProps) {
         }
     };
 
+    const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let amountValue = event.target.value;
+    
+        setAmount(amountValue);
+        if(!validAmount(amountValue)) {
+            setAmountError(true);
+            setAmountErrorMessage('Please enter a valid estimated amount.');
+        } else {
+            setAmountError(false);
+            setAmountErrorMessage('');
+        }
+    }
+
 
     // Validation Functions
     const validEmailAddress = (email: string) => {
@@ -72,13 +85,19 @@ function Form({ theme }: FormInputProps) {
         return emailRegex.test(email);
     };
 
+    const validAmount = (amount: string) => {
+        // Check if the amount is a valid number and greater than 0
+        const amountValue = parseFloat(amount);
+        return !isNaN(amountValue) && amountValue > 0;
+    };
+
 
     //Form Submission
     const validateFormInputs = () => {
-        if(firstNameError)
+        if(firstNameError || lastNameError || emailError || amountError)
             return false;
 
-        if(!firstName)
+        if(!firstName || !lastName || !validEmailAddress(email) || !validAmount(amount))
             return false;
 
         return true;
@@ -86,10 +105,19 @@ function Form({ theme }: FormInputProps) {
 
     const resetToDefaults = () => {
         setFirstName('');
+        setLastName('');
+        setEmail('');
+        setAmount('');
 
         setFirstNameError(false);
+        setLastNameError(false);
+        setEmailError(false);
+        setAmountError(false);
 
         setFirstNameErrorMessage('');
+        setLastNameErrorMessage('');
+        setEmailErrorMessage('');
+        setAmountErrorMessage('');
     }
 
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -100,6 +128,9 @@ function Form({ theme }: FormInputProps) {
 
         console.log({
             firstName,
+            lastName,
+            email,
+            amount
         });
 
         resetToDefaults();
@@ -141,51 +172,80 @@ function Form({ theme }: FormInputProps) {
                 sx={{
                     display: "flex",
                     flexDirection: "column",
+                    textAlign: "left",
                     gap: 3,
                     mt: 4,
                     backgroundColor: theme.palette.background.default,
                 }}
             >
 
-                <TextField
-                    label="First Name"
-                    id="firstName"
-                    name="firstName"
-                    value={firstName}
-                    onChange={handleFirstNameChange}
-                    fullWidth
-                    variant="outlined"
-                    placeholder="John"
-                    error={firstNameError}
-                    helperText={firstNameErrorMessage}
-                />
+                <FormControl>
+                    <FormLabel htmlFor="firstName">First Name</FormLabel>
+                    <TextField
+                        id="firstName"
+                        name="firstName"
+                        value={firstName}
+                        onChange={handleFirstNameChange}
+                        fullWidth
+                        variant="outlined"
+                        placeholder="John"
+                        error={firstNameError}
+                        helperText={firstNameErrorMessage}
+                    />
+                </FormControl>
 
-                <TextField
-                    label="Last Name"
-                    id="lastName"
-                    name="lastName"
-                    value={lastName}
-                    onChange={handleLastNameChange}
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Doe"
-                    error={lastNameError}
-                    helperText={lastNameErrorMessage}
-                />
+                <FormControl>
+                    <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                    <TextField
+                        id="lastName"
+                        name="lastName"
+                        value={lastName}
+                        onChange={handleLastNameChange}
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Doe"
+                        error={lastNameError}
+                        helperText={lastNameErrorMessage}
+                    />
+                </FormControl>
 
-                <TextField
-                    label="Email Address"
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={email}
-                    onChange={handleEmailChange}
-                    fullWidth
-                    variant="outlined"
-                    placeholder="you@domain.com"
-                    error={emailError}
-                    helperText={emailErrorMessage}
-                />
+                <FormControl>
+                    <FormLabel htmlFor="email">Email Address</FormLabel>
+                    <TextField
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={email}
+                        onChange={handleEmailChange}
+                        fullWidth
+                        variant="outlined"
+                        placeholder="you@domain.com"
+                        error={emailError}
+                        helperText={emailErrorMessage}
+                    />
+                </FormControl>
+
+                <FormControl>
+                    <FormLabel htmlFor="amount">Estimated Amount</FormLabel>
+                    <TextField
+                        id="amount"
+                        name="amount"
+                        value={amount}
+                        onChange={handleAmountChange}
+                        fullWidth
+                        variant="outlined"
+                        placeholder="249.99"
+                        error={amountError}
+                        helperText={amountErrorMessage}
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">$</InputAdornment>
+                                )
+                            }
+                        }}
+                    />
+                </FormControl>
 
                 <Button
                     type="submit"
