@@ -10,12 +10,18 @@ function Form({ theme }: FormInputProps) {
     // State Definitions
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+
 
     const [firstNameError, setFirstNameError] = useState(false);
     const [lastNameError, setLastNameError] = useState(false);
+    const [emailError, setEmailError] = useState(false);
+
 
     const [firstNameErrorMessage, setFirstNameErrorMessage] = useState('');
     const [lastNameErrorMessage, setLastNameErrorMessage] = useState('');
+    const [emailErrorMessage, setEmailErrorMessage] = useState('');
+
 
 
     // Handle Input Changes
@@ -45,7 +51,29 @@ function Form({ theme }: FormInputProps) {
         }
     };
 
-    // Validation & Form Submission
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let emailValue = event.target.value;
+
+        setEmail(emailValue);
+        if(!validEmailAddress(emailValue)) {
+            setEmailError(true);
+            setEmailErrorMessage('Please enter a valid email address.');
+        }
+        else {
+            setEmailError(false);
+            setEmailErrorMessage('');
+        }
+    };
+
+
+    // Validation Functions
+    const validEmailAddress = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+
+    //Form Submission
     const validateFormInputs = () => {
         if(firstNameError)
             return false;
@@ -143,6 +171,20 @@ function Form({ theme }: FormInputProps) {
                     placeholder="Doe"
                     error={lastNameError}
                     helperText={lastNameErrorMessage}
+                />
+
+                <TextField
+                    label="Email Address"
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={email}
+                    onChange={handleEmailChange}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="you@domain.com"
+                    error={emailError}
+                    helperText={emailErrorMessage}
                 />
 
                 <Button
