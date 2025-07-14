@@ -1,5 +1,6 @@
-import { Box, Button, FormControl, FormLabel, InputAdornment, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
+import { Box, Button, FormControl, FormLabel, InputAdornment, TextField, Typography } from '@mui/material';
+import FormatInput from './FormatInput';
 
 interface FormInputProps {
     theme: any; // Assuming you have a theme type defined
@@ -10,16 +11,19 @@ function Form({ theme }: FormInputProps) {
     // State Definitions
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [amount, setAmount] = useState('');
 
     const [firstNameError, setFirstNameError] = useState(false);
     const [lastNameError, setLastNameError] = useState(false);
+    const [phoneNumberError, setPhoneNumberError] = useState(false);
     const [emailError, setEmailError] = useState(false);
     const [amountError, setAmountError] = useState(false);
 
     const [firstNameErrorMessage, setFirstNameErrorMessage] = useState('');
     const [lastNameErrorMessage, setLastNameErrorMessage] = useState('');
+    const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
     const [amountErrorMessage, setAmountErrorMessage] = useState('');
 
@@ -51,6 +55,18 @@ function Form({ theme }: FormInputProps) {
         }
     };
 
+    const handlePhoneNumberChange = (phoneNumberValue: string) => {
+        setPhoneNumber(phoneNumberValue);
+
+        if(!validPhoneNumber(phoneNumberValue)) {
+            setPhoneNumberError(true);
+            setPhoneNumberErrorMessage('Phone Number should be exactly 10 digits.');
+        } else {
+            setPhoneNumberError(false);
+            setPhoneNumberErrorMessage('');
+        }
+    };
+
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let emailValue = event.target.value;
 
@@ -71,7 +87,7 @@ function Form({ theme }: FormInputProps) {
         setAmount(amountValue);
         if(!validAmount(amountValue)) {
             setAmountError(true);
-            setAmountErrorMessage('Please enter a valid estimated amount.');
+            setAmountErrorMessage('Please enter a valid positive estimated amount.');
         } else {
             setAmountError(false);
             setAmountErrorMessage('');
@@ -80,6 +96,11 @@ function Form({ theme }: FormInputProps) {
 
 
     // Validation Functions
+    const validPhoneNumber = (phoneNumber: string) => {
+        // Check if the phone number is exactly 10 digits
+        return /^\d{10}$/.test(phoneNumber);
+    };
+
     const validEmailAddress = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -92,12 +113,23 @@ function Form({ theme }: FormInputProps) {
     };
 
 
+    // Format Display Functions
+    const formatPhoneNumberDisplay = (phoneNumberValue: string):string => {
+        // Remove any non-digit characters for processing
+        const cleanValue = phoneNumberValue.replace(/[^0-9]/g, '');
+
+        if (cleanValue.length === 0) return '';
+
+        return `(${cleanValue.slice(0, 3)}) ${cleanValue.slice(3, 6)} - ${cleanValue.slice(6)}`;
+    }
+
+
     //Form Submission
     const validateFormInputs = () => {
-        if(firstNameError || lastNameError || emailError || amountError)
+        if(firstNameError || lastNameError || phoneNumberError || emailError || amountError)
             return false;
 
-        if(!firstName || !lastName || !validEmailAddress(email) || !validAmount(amount))
+        if(!firstName || !lastName || !validPhoneNumber(phoneNumber) || !validEmailAddress(email) || !validAmount(amount))
             return false;
 
         return true;
@@ -106,16 +138,19 @@ function Form({ theme }: FormInputProps) {
     const resetToDefaults = () => {
         setFirstName('');
         setLastName('');
+        setPhoneNumber('');
         setEmail('');
         setAmount('');
 
         setFirstNameError(false);
         setLastNameError(false);
+        setPhoneNumberError(false);
         setEmailError(false);
         setAmountError(false);
 
         setFirstNameErrorMessage('');
         setLastNameErrorMessage('');
+        setPhoneNumberErrorMessage('');
         setEmailErrorMessage('');
         setAmountErrorMessage('');
     }
@@ -129,6 +164,7 @@ function Form({ theme }: FormInputProps) {
         console.log({
             firstName,
             lastName,
+            phoneNumber,
             email,
             amount
         });
@@ -208,6 +244,17 @@ function Form({ theme }: FormInputProps) {
                         helperText={lastNameErrorMessage}
                     />
                 </FormControl>
+
+                <FormatInput
+                    id="phoneNumber"
+                    name="Phone Number"
+                    placeholder="(123) 456-7890"
+                    onValueChange={handlePhoneNumberChange}
+                    formatDisplay={formatPhoneNumberDisplay}
+                    error={phoneNumberError}
+                    errorMessage={phoneNumberErrorMessage}
+                    inputLength={10}
+                />
 
                 <FormControl>
                     <FormLabel htmlFor="email">Email Address</FormLabel>
