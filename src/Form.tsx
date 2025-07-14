@@ -1,0 +1,143 @@
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { useState } from 'react';
+
+interface FormInputProps {
+    theme: any; // Assuming you have a theme type defined
+}
+
+
+function Form({ theme }: FormInputProps) {
+    // State Definitions
+    const [firstName, setFirstName] = useState('');
+
+    const [firstNameError, setFirstNameError] = useState(false);
+
+    const [firstNameErrorMessage, setFirstNameErrorMessage] = useState('');
+
+
+    // Handle Input Changes
+    const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let firstNameValue = event.target.value;
+
+    setFirstName(firstNameValue);
+    if (firstNameValue.length < 1) {
+        setFirstNameError(true);
+        setFirstNameErrorMessage('First Name is required.');
+    } else {
+        setFirstNameError(false);
+        setFirstNameErrorMessage('');
+    }
+    };
+
+    // Validation & Form Submission
+    const validateFormInputs = () => {
+        if(firstNameError)
+            return false;
+
+        if(!firstName)
+            return false;
+
+        return true;
+    }
+
+    const resetToDefaults = () => {
+        setFirstName('');
+
+        setFirstNameError(false);
+
+        setFirstNameErrorMessage('');
+    }
+
+    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        if (!validateFormInputs()) {
+            event.preventDefault();
+            return;
+        }
+
+        console.log({
+            firstName,
+        });
+
+        resetToDefaults();
+    }
+
+
+    return(
+        <Box
+            sx={{
+                width: '100%',
+                backgroundColor: theme.palette.background.default, // Use theme paper background color
+                padding: { xs: 4, md: 5 }, // Equivalent to p-8 md:p-10
+                borderWidth: 1,
+                borderStyle: 'solid',
+                borderRadius: 6,
+                borderColor: theme.palette.primary.light
+            }}
+        >
+            <Typography
+                variant="h4"
+                component="h4"
+                align="center"
+                gutterBottom
+                sx={{ color: theme.palette.primary.main }}
+            >
+                Air Fryer
+            </Typography>
+            <Typography
+                variant="body1"
+                align="center"
+                sx={{ color: theme.palette.text.secondary }}
+            >
+                Fill out the details below to win a brand-new Air Fryer
+            </Typography>
+
+            <Box
+                component="form"
+                onSubmit={handleFormSubmit}
+                sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 3,
+                mt: 4,
+                backgroundColor: theme.palette.background.default,
+                }}
+            >
+
+                <TextField
+                    label="First Name"
+                    id="firstName"
+                    name="firstName"
+                    value={firstName}
+                    onChange={handleFirstNameChange}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="John"
+                    error={firstNameError}
+                    helperText={firstNameErrorMessage}
+                />
+
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    disabled={!validateFormInputs()}
+                    sx={{ mt: 2 }}
+                >
+                    Submit
+                </Button>
+
+                <Button
+                    onClick={resetToDefaults}
+                    variant="outlined"
+                    fullWidth
+                >
+                    Reset
+                </Button>
+
+            </Box>
+
+        </Box>
+    );
+}
+
+export default Form;
