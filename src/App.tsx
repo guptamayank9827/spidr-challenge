@@ -1,7 +1,7 @@
 // import React from 'react';
 import { Container, ThemeProvider } from '@mui/material';
 import Form from './Form';
-import { brandTheme as theme } from './theme'; // Assuming you have a theme file for MUI
+import { brandTheme as theme } from './theme';
 import './App.css';
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: theme.palette.background.paper,
-            padding: 4
+            padding: 2
           }}
         >
 

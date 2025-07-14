@@ -14,18 +14,21 @@ function Form({ theme }: FormInputProps) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [amount, setAmount] = useState('');
+    const [pin, setPin] = useState('');
 
     const [firstNameError, setFirstNameError] = useState(false);
     const [lastNameError, setLastNameError] = useState(false);
     const [phoneNumberError, setPhoneNumberError] = useState(false);
     const [emailError, setEmailError] = useState(false);
     const [amountError, setAmountError] = useState(false);
+    const [pinError, setPinError] = useState(false);
 
     const [firstNameErrorMessage, setFirstNameErrorMessage] = useState('');
     const [lastNameErrorMessage, setLastNameErrorMessage] = useState('');
     const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
     const [amountErrorMessage, setAmountErrorMessage] = useState('');
+    const [pinErrorMessage, setPinErrorMessage] = useState('');
 
 
     // Handle Input Changes
@@ -94,6 +97,18 @@ function Form({ theme }: FormInputProps) {
         }
     }
 
+    const handlePinChange = (pinValue:string) => {
+        setPin(pinValue);
+
+        if(!validPin(pinValue)) {
+            setPinError(true);
+            setPinErrorMessage('Please enter the 16 digit secret pin.');
+        } else {
+            setPinError(false);
+            setPinErrorMessage('');
+        }
+    }
+
 
     // Validation Functions
     const validPhoneNumber = (phoneNumber: string) => {
@@ -112,24 +127,47 @@ function Form({ theme }: FormInputProps) {
         return !isNaN(amountValue) && amountValue > 0;
     };
 
+    const validPin = (pin: string) => {
+        // Check if the pin is exactly 16 characters long and formatted as ####-####-####-####
+        if(pin.length !== 16) return false;
+        return true;
+    };
+
 
     // Format Display Functions
     const formatPhoneNumberDisplay = (phoneNumberValue: string):string => {
         // Remove any non-digit characters for processing
         const cleanValue = phoneNumberValue.replace(/[^0-9]/g, '');
 
+        // If empty input, return empty string
         if (cleanValue.length === 0) return '';
 
         return `(${cleanValue.slice(0, 3)}) ${cleanValue.slice(3, 6)} - ${cleanValue.slice(6)}`;
     }
 
+    const formatPinDisplay = (pinValue: string): string => {
+        // Remove any non-digit characters for processing
+        const cleanValue = pinValue.replace(/[^0-9]/g, '');
+
+        // If empty input, return empty string
+        if (cleanValue.length === 0) return '';
+        
+        // Create masked display with # symbols
+        const masked = cleanValue
+            .split('')
+            .map(() => '#')
+            .join('');
+
+        return masked.match(/.{1,4}/g)?.join('-') || masked;
+    };
+
 
     //Form Submission
     const validateFormInputs = () => {
-        if(firstNameError || lastNameError || phoneNumberError || emailError || amountError)
+        if(firstNameError || lastNameError || phoneNumberError || emailError || amountError || pinError)
             return false;
 
-        if(!firstName || !lastName || !validPhoneNumber(phoneNumber) || !validEmailAddress(email) || !validAmount(amount))
+        if(!firstName || !lastName || !validPhoneNumber(phoneNumber) || !validEmailAddress(email) || !validAmount(amount) || !validPin(pin))
             return false;
 
         return true;
@@ -141,18 +179,21 @@ function Form({ theme }: FormInputProps) {
         setPhoneNumber('');
         setEmail('');
         setAmount('');
+        setPin('');
 
         setFirstNameError(false);
         setLastNameError(false);
         setPhoneNumberError(false);
         setEmailError(false);
         setAmountError(false);
+        setPinError(false);
 
         setFirstNameErrorMessage('');
         setLastNameErrorMessage('');
         setPhoneNumberErrorMessage('');
         setEmailErrorMessage('');
         setAmountErrorMessage('');
+        setPinErrorMessage('');
     }
 
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -293,6 +334,17 @@ function Form({ theme }: FormInputProps) {
                         }}
                     />
                 </FormControl>
+
+                <FormatInput
+                    id="pin"
+                    name="Secret PIN"
+                    placeholder="####-####-####-####"
+                    onValueChange={handlePinChange}
+                    formatDisplay={formatPinDisplay}
+                    error={pinError}
+                    errorMessage={pinErrorMessage}
+                    inputLength={16}
+                />
 
                 <Button
                     type="submit"
