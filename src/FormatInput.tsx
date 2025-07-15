@@ -1,4 +1,4 @@
-import React, {useState, ChangeEvent} from 'react'
+import React, {useState, useEffect, ChangeEvent} from 'react'
 import { FormControl, FormLabel, TextField } from "@mui/material";
 
 interface FormatInputProps {
@@ -10,13 +10,22 @@ interface FormatInputProps {
     error?: boolean;
     errorMessage?: string;
     inputLength?: number; // Optional prop to specify the length of the input
+    resetValues?: boolean;
 }
 
-function FormatInput({ id="id", name="name", placeholder="Enter 16 digits", error=false, errorMessage="", inputLength=16, onValueChange, formatDisplay }: FormatInputProps) {
+function FormatInput({ id="id", name="name", placeholder="Enter 16 digits", error=false, errorMessage="", inputLength=16, resetValues=false, onValueChange, formatDisplay }: FormatInputProps) {
     const [actualValue, setActualValue] = useState<string>('');
     const [displayValue, setDisplayValue] = useState<string>('');
 
     const FORMATTING_CHARACTERS = ['-', ' ', '(', ')'];
+
+
+    useEffect(() => {
+        if(resetValues) {
+            setActualValue('');
+            setDisplayValue('');
+        }
+    }, [resetValues]);
 
     const displayPositionToActual = (displayPos: number): number => {
         let actualPos = 0;
