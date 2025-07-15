@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Button, FormControl, FormLabel, InputAdornment, TextField, Typography } from '@mui/material';
 import FormatInput from './FormatInput';
 
@@ -29,6 +29,12 @@ function Form({ theme }: FormInputProps) {
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
     const [amountErrorMessage, setAmountErrorMessage] = useState('');
     const [pinErrorMessage, setPinErrorMessage] = useState('');
+
+    const [resetValues, setResetValues] = useState(false);
+
+    useEffect(() => {
+        if(resetValues) setResetValues(false);
+    }, [resetValues]);
 
 
     // Handle Input Changes
@@ -193,6 +199,8 @@ function Form({ theme }: FormInputProps) {
         setEmailErrorMessage('');
         setAmountErrorMessage('');
         setPinErrorMessage('');
+
+        setResetValues(true);
     }
 
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -201,13 +209,14 @@ function Form({ theme }: FormInputProps) {
             return;
         }
 
-        console.log({
-            firstName,
-            lastName,
-            phoneNumber,
-            email,
-            amount
-        });
+        console.log(`
+            First Name: ${firstName}
+            Last Name: ${lastName}
+            Phone Number: ${phoneNumber}
+            Email Address: ${email}
+            Estimated Amount: ${amount}
+            Secret Pin: ${pin}
+        `);
 
         resetToDefaults();
     }
@@ -217,8 +226,8 @@ function Form({ theme }: FormInputProps) {
         <Box
             sx={{
                 width: '100%',
-                backgroundColor: theme.palette.background.default, // Use theme paper background color
-                padding: { xs: 4, md: 5 }, // Equivalent to p-8 md:p-10
+                backgroundColor: theme.palette.background.default,
+                padding: { xs: 4, md: 5 },
                 borderWidth: 1,
                 borderStyle: 'solid',
                 borderRadius: 6,
@@ -294,6 +303,7 @@ function Form({ theme }: FormInputProps) {
                     error={phoneNumberError}
                     errorMessage={phoneNumberErrorMessage}
                     inputLength={10}
+                    resetValues={resetValues}
                 />
 
                 <FormControl>
@@ -318,6 +328,7 @@ function Form({ theme }: FormInputProps) {
                         id="amount"
                         name="amount"
                         value={amount}
+                        type='number'
                         onChange={handleAmountChange}
                         fullWidth
                         variant="outlined"
@@ -327,8 +338,16 @@ function Form({ theme }: FormInputProps) {
                         slotProps={{
                             input: {
                                 startAdornment: (
-                                    <InputAdornment position="start">$</InputAdornment>
+                                    <InputAdornment position="start" sx={{color:theme.palette.text.primary}}>$</InputAdornment>
                                 )
+                            }
+                        }}
+                        sx={{
+                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                display: 'none',
+                            },
+                            '& input[type=number]': {
+                                MozAppearance: 'textfield',
                             }
                         }}
                     />
@@ -343,6 +362,7 @@ function Form({ theme }: FormInputProps) {
                     error={pinError}
                     errorMessage={pinErrorMessage}
                     inputLength={16}
+                    resetValues={resetValues}
                 />
 
                 <Button
