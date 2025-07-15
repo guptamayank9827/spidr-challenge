@@ -9,7 +9,7 @@ interface FormatInputProps {
     formatDisplay: (value: string) => string;
     error?: boolean;
     errorMessage?: string;
-    inputLength?: number; // Optional prop to specify the length of the input
+    inputLength?: number;
     resetValues?: boolean;
 }
 
@@ -97,7 +97,7 @@ function FormatInput({ id="id", name="name", placeholder="Enter 16 digits", erro
             return;
         }
         
-        // Handle regular character input (digits only)
+        // Handle regular input
         if (actualValue.length < inputLength) {
             const char = event.key;
             if (/[0-9]/.test(char)) {

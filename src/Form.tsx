@@ -226,8 +226,8 @@ function Form({ theme }: FormInputProps) {
         <Box
             sx={{
                 width: '100%',
-                backgroundColor: theme.palette.background.default, // Use theme paper background color
-                padding: { xs: 4, md: 5 }, // Equivalent to p-8 md:p-10
+                backgroundColor: theme.palette.background.default,
+                padding: { xs: 4, md: 5 },
                 borderWidth: 1,
                 borderStyle: 'solid',
                 borderRadius: 6,
