@@ -102,7 +102,7 @@ function Form({ theme }: FormInputProps) {
 
         if(!validPin(pinValue)) {
             setPinError(true);
-            setPinErrorMessage('Please enter the 16 digit secret pin.');
+            setPinErrorMessage('Please enter the 16 digit secret PIN.');
         } else {
             setPinError(false);
             setPinErrorMessage('');
@@ -128,9 +128,8 @@ function Form({ theme }: FormInputProps) {
     };
 
     const validPin = (pin: string) => {
-        // Check if the pin is exactly 16 characters long and formatted as ####-####-####-####
-        if(pin.length !== 16) return false;
-        return true;
+        // Check if the pin is exactly 16 digits
+        return /^\d{16}$/.test(pin);
     };
 
 
@@ -145,7 +144,7 @@ function Form({ theme }: FormInputProps) {
         return `(${cleanValue.slice(0, 3)}) ${cleanValue.slice(3, 6)} - ${cleanValue.slice(6)}`;
     }
 
-    const formatPinDisplay = (pinValue: string): string => {
+    const formatPinDisplay = (pinValue: string): string => {        
         // Remove any non-digit characters for processing
         const cleanValue = pinValue.replace(/[^0-9]/g, '');
 
@@ -236,9 +235,9 @@ function Form({ theme }: FormInputProps) {
                 Air Fryer
             </Typography>
             <Typography
-                variant="body1"
+                variant="subtitle1"
                 align="center"
-                sx={{ color: theme.palette.text.secondary }}
+                sx={{ color: theme.palette.text.primary }}
             >
                 Fill out the details below to win a brand-new Air Fryer
             </Typography>
